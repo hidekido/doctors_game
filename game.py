@@ -8,7 +8,7 @@ DISPLAY = (WINWIDTH, WINHEIGHT)
 BACKGROUND_COLOR = "#444444"
 
 game = "WOW"
-game = "WOWOWOWO"
+game = "WOWOW"
 
 def main():
 	pygame.init()
