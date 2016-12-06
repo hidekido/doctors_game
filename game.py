@@ -6,13 +6,11 @@ WINHEIGHT = 768
 WINWIDTH = 1024
 DISPLAY = (WINWIDTH, WINHEIGHT)
 BACKGROUND_COLOR = "#444444"
-
-game = "WOW"
-game = "WOWOW"
-
 def main():
 	pygame.init()
-	
+	screen = pygame.display.set_mode(DISPLAY)
+	pygame.display.set_caption("Amazing Doctor Strange")
+	bg = Surface((WINWIDTH,WINHEIGHT))
 	bg.fill(Color(BACKGROUND_COLOR))
 	mainLoop = True
 	while mainLoop:
