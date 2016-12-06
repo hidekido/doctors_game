@@ -12,9 +12,7 @@ game = "WOWOW"
 
 def main():
 	pygame.init()
-	screen = pygame.display.set_mode(DISPLAY)
-	pygame.display.set_caption("Amazing Doctor Strange")
-	bg = Surface((WINWIDTH,WINHEIGHT))
+	
 	bg.fill(Color(BACKGROUND_COLOR))
 	mainLoop = True
 	while mainLoop:
