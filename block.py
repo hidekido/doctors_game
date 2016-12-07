@@ -2,8 +2,8 @@ from pygame import *
 from pygame.locals import *
 import os
 
-PLATFORM_WIDTH = 25
-PLATFORM_HEIGHT = 25
+PLATFORM_WIDTH = 32
+PLATFORM_HEIGHT = 32
 PLATFORM_COLOR = "#FF6262"
 DIR = os.path.dirname(__file__)
 
