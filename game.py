@@ -107,6 +107,9 @@ def main():
     left = right = False # по умолчанию - стоим
     up = False
     entities.add(hero)
+    portal = BlockTeleport(400,300,55,55)
+    entities.add(portal)
+    platforms.append(portal)
     lvlinit()
     camera = Camera(camera_configure, total_level_width, total_level_height)
     timer = pygame.time.Clock()
@@ -131,6 +134,7 @@ def main():
             if e.type == KEYUP and e.key == K_LEFT:
                 left = False
         screen.blit(bg, (0,0))
+        portal.update()
         hero.update(left, right, up,platforms)
         for e in entities:
             screen.blit(e.image, camera.apply(e))

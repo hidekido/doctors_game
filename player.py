@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pygame import *
+import block
 import pyganim
 import os
 
@@ -113,18 +114,26 @@ class Player(sprite.Sprite):
         for p in platforms:
             if sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
 
-                if xvel > 0:                      # если движется вправо
-                    self.rect.right = p.rect.left # то не движется вправо
+                if isinstance(p, block.BlockTeleport):
+                       self.teleporting(p.goX, p.goY)
+                else:
+                    if xvel > 0:                      # если движется вправо
+                        self.rect.right = p.rect.left # то не движется вправо
 
-                if xvel < 0:                      # если движется влево
-                    self.rect.left = p.rect.right # то не движется влево
+                    if xvel < 0:                      # если движется влево
+                        self.rect.left = p.rect.right # то не движется влево
 
-                if yvel > 0:                      # если падает вниз
-                    self.rect.bottom = p.rect.top # то не падает вниз
-                    self.onGround = True          # и становится на что-то твердое
-                    self.yvel = 0                 # и энергия падения пропадает
+                    if yvel > 0:                      # если падает вниз
+                        self.rect.bottom = p.rect.top # то не падает вниз
+                        self.onGround = True          # и становится на что-то твердое
+                        self.yvel = 0                 # и энергия падения пропадает
 
-                if yvel < 0:                      # если движется вверх
-                    self.rect.top = p.rect.bottom # то не движется вверх
-                    self.yvel = 0                 # и энергия прыжка пропадает
+                    if yvel < 0:                      # если движется вверх
+                        self.rect.top = p.rect.bottom # то не движется вверх
+                        self.yvel = 0                 # и энергия прыжка пропадает
+
+    def teleporting(self, goX, goY):
+        self.rect.x = goX
+        self.rect.y = goY
+
        
