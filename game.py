@@ -15,7 +15,7 @@ screen = pygame.display.set_mode(DISPLAY)
 pygame.display.set_caption('Start menu')
 clock = pygame.time.Clock()
 bg = Surface((WINWIDTH,WINHEIGHT))
-
+activegame = True
 
 entities = pygame.sprite.Group() # Все объекты
 platforms = [] # то, во что мы будем врезаться или опираться
@@ -82,10 +82,12 @@ def lvlinit():
     level = []
     line = f.readline()
     while line != '':
-        line = line[1:-2]
+        if line[-2] == '\n':
+            line = line[1:-1]
+        else:
+            line = line[1:-2]
         level += [line]
         line = f.readline()
-    level[-1] += '-'
     x = y = 0 # координаты
     for row in level: # вся строка
         for col in row: # каждый символ
@@ -99,24 +101,29 @@ def lvlinit():
     
     total_level_width  = len(level[0])*PLATFORM_WIDTH # Высчитываем фактическую ширину уровня
     total_level_height = len(level)*PLATFORM_HEIGHT   # высоту
-    
+
+def closegame():
+    global activegame 
+    activegame = False
 
 def main():
+    entities.empty()
+    platforms.clear()
+    timer = pygame.time.Clock()
     pygame.display.set_caption("Amazing Doctor Strange")
     bg.fill(Color(BACKGROUND_COLOR))
     hero = Player(55,55) # создаем героя по (x,y) координатам
     left = right = False # по умолчанию - стоим
     up = False
+    global activegame
     entities.add(hero)
     lvlinit()
     camera = Camera(camera_configure, total_level_width, total_level_height)
-    timer = pygame.time.Clock()
     portalin = None
-    mainLoop = True
+    timer.tick(10000)
     click = [0]
-    while mainLoop:
+    while activegame:
         timer.tick(60)
-        
         for e in pygame.event.get(): # Обрабатываем события
             if e.type == QUIT:
                 raise SystemExit
@@ -137,9 +144,10 @@ def main():
             if portalin != None:
                 entities.remove(portalin)
                 platforms.remove(portalin)
-            portalin = BlockTeleport(mouse[0],mouse[1])
+            portalin = BlockTeleport(mouse[0]-32,mouse[1]-48)
             platforms.append(portalin)
             entities.add(portalin)
+
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
 
@@ -149,8 +157,11 @@ def main():
         for e in entities:
             screen.blit(e.image, camera.apply(e))
         hero.update(left,right,up,platforms)
+        button("Back to menu",768,672,256,96,red,bright_red,closegame)
         pygame.display.update()
-    pygame.quit() 
+    activegame = True
+
+    
 
 def records_menu():
     pygame.display.set_caption("Records menu")
