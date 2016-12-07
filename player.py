@@ -6,8 +6,8 @@ import pyganim
 import os
 
 MOVE_SPEED = 7
-WIDTH = 22
-HEIGHT = 32
+WIDTH = 85
+HEIGHT = 100
 COLOR =  "#888888"
 JUMP_POWER = 10
 GRAVITY = 0.35 

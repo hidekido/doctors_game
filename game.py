@@ -16,7 +16,33 @@ bg.fill(Color(BACKGROUND_COLOR))
 entities = pygame.sprite.Group() # Все объекты
 platforms = [] # то, во что мы будем врезаться или опираться
 DIR = os.path.dirname(__file__)
+total_level_width = 1
+total_level_height = 1
+
 black = (0,0,0)
+
+class Camera(object):
+    def __init__(self, camera_func, width, height):
+        self.camera_func = camera_func
+        self.state = Rect(0, 0, width, height)
+
+    def apply(self, target):
+        return target.rect.move(self.state.topleft)
+
+    def update(self, target):
+        self.state = self.camera_func(self.state, target.rect)
+        
+def camera_configure(camera, target_rect):
+    l, t, _, _ = target_rect
+    _, _, w, h = camera
+    l, t = -l+WINWIDTH / 2, -t+WINHEIGHT / 2
+
+    l = min(0, l)                           # Не движемся дальше левой границы
+    l = max(-(camera.width-WINWIDTH), l)   # Не движемся дальше правой границы
+    t = max(-(camera.height-WINHEIGHT), t) # Не движемся дальше нижней границы
+    t = min(0, t)                           # Не движемся дальше верхней границы
+
+    return Rect(l, t, w, h) 
 
 def text_objects(text, font):
     textSurface = font.render(text, True, black)
@@ -66,16 +92,34 @@ def main():
     hero = Player(55,55) # создаем героя по (x,y) координатам
     left = right = False # по умолчанию - стоим
     up = False
+    entities.add(hero)
     lvlinit()
+    camera = Camera(camera_configure, total_level_width, total_level_height)
     timer = pygame.time.Clock()
     mainLoop = True
     while mainLoop:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                mainLoop = False
+        timer.tick(60)
+        for e in pygame.event.get(): # Обрабатываем события
+            if e.type == QUIT:
+                raise SystemExit
+            if e.type == KEYDOWN and e.key == K_UP:
+                up = True
+            if e.type == KEYDOWN and e.key == K_LEFT:
+                left = True
+            if e.type == KEYDOWN and e.key == K_RIGHT:
+                right = True
+
+
+            if e.type == KEYUP and e.key == K_UP:
+                up = False
+            if e.type == KEYUP and e.key == K_RIGHT:
+                right = False
+            if e.type == KEYUP and e.key == K_LEFT:
+                left = False
         screen.blit(bg, (0,0))
+        hero.update(left, right, up,platforms)
         for e in entities:
-            screen.blit(e.image, (e.x,e.y))
+            screen.blit(e.image, camera.apply(e))
         pygame.display.update()
     pygame.quit() 
 
