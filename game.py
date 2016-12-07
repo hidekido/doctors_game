@@ -46,6 +46,7 @@ def lvlinit():
         line = line[1:-2]
         level += [line]
         line = f.readline()
+    level[-1] += '-'
     x = y = 0 # координаты
     for row in level: # вся строка
         for col in row: # каждый символ
