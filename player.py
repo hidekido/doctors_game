@@ -6,11 +6,11 @@ import pyganim
 import os
 
 MOVE_SPEED = 7
-WIDTH = 85
-HEIGHT = 100
+WIDTH = 64
+HEIGHT = 96
 COLOR =  "#888888"
 JUMP_POWER = 10
-GRAVITY = 0.35 
+GRAVITY = 0.2 
 ANIMATION_DELAY = 0.1
 ICON_DIR = os.path.dirname(__file__)
 
