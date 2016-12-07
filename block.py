@@ -24,7 +24,7 @@ class Platform(sprite.Sprite):
 		self.rect = Rect(x, y, PLATFORM_WIDTH, PLATFORM_HEIGHT)
 
 class BlockTeleport(sprite.Sprite):
-	def __init__(self, x, y, goX,goY):
+	def __init__(self, x, y, goX = 55, goY = 55, act = 0):
 		sprite.Sprite.__init__(self)
 		self.image = Surface((tp_width, tp_height))
 		self.image.fill(Color("#444444"))

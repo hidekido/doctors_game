@@ -115,7 +115,7 @@ class Player(sprite.Sprite):
             if sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
 
                 if isinstance(p, block.BlockTeleport):
-                       self.teleporting(p.goX, p.goY)
+                    self.teleporting(p.goX, p.goY)
                 else:
                     if xvel > 0:                      # если движется вправо
                         self.rect.right = p.rect.left # то не движется вправо

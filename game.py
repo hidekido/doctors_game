@@ -14,11 +14,12 @@ pygame.init()
 screen = pygame.display.set_mode(DISPLAY)
 pygame.display.set_caption('Start menu')
 clock = pygame.time.Clock()
-
 bg = Surface((WINWIDTH,WINHEIGHT))
+
 
 entities = pygame.sprite.Group() # Все объекты
 platforms = [] # то, во что мы будем врезаться или опираться
+
 DIR = os.path.dirname(__file__)
 total_level_width = 1
 total_level_height = 1
@@ -107,15 +108,15 @@ def main():
     left = right = False # по умолчанию - стоим
     up = False
     entities.add(hero)
-    portal = BlockTeleport(400,300,55,55)
-    entities.add(portal)
-    platforms.append(portal)
     lvlinit()
     camera = Camera(camera_configure, total_level_width, total_level_height)
     timer = pygame.time.Clock()
+    portalin = None
     mainLoop = True
     while mainLoop:
         timer.tick(60)
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
         for e in pygame.event.get(): # Обрабатываем события
             if e.type == QUIT:
                 raise SystemExit
@@ -125,19 +126,25 @@ def main():
                 left = True
             if e.type == KEYDOWN and e.key == K_RIGHT:
                 right = True
-
-
             if e.type == KEYUP and e.key == K_UP:
                 up = False
             if e.type == KEYUP and e.key == K_RIGHT:
                 right = False
             if e.type == KEYUP and e.key == K_LEFT:
                 left = False
+
+        if click[0] == 1:
+            if portalin != None:
+                entities.remove(portalin)
+            portalin = BlockTeleport(mouse[0],mouse[1])
+            entities.add(portalin)
+
         screen.blit(bg, (0,0))
-        portal.update()
-        hero.update(left, right, up,platforms)
+        if portalin != None:
+            portalin.update()
         for e in entities:
             screen.blit(e.image, camera.apply(e))
+        hero.update(left,right,up,platforms)
         pygame.display.update()
     pygame.quit() 
 
