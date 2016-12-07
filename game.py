@@ -6,13 +6,17 @@ import os
 
 WINHEIGHT = 768
 WINWIDTH = 1024
+width = 1024
+height = 768
 DISPLAY = (WINWIDTH, WINHEIGHT)
 BACKGROUND_COLOR = "#444444"
 pygame.init()
 screen = pygame.display.set_mode(DISPLAY)
-pygame.display.set_caption("Amazing Doctor Strange")
+pygame.display.set_caption('Start menu')
+clock = pygame.time.Clock()
+
 bg = Surface((WINWIDTH,WINHEIGHT))
-bg.fill(Color(BACKGROUND_COLOR))
+
 entities = pygame.sprite.Group() # Все объекты
 platforms = [] # то, во что мы будем врезаться или опираться
 DIR = os.path.dirname(__file__)
@@ -20,6 +24,13 @@ total_level_width = 1
 total_level_height = 1
 
 black = (0,0,0)
+white = (255,255,255)
+red = (200,0,0)
+green = (0,200,0)
+bright_red = (255,0,0)
+bright_green = (0,255,0)
+
+
 
 class Camera(object):
     def __init__(self, camera_func, width, height):
@@ -64,6 +75,7 @@ def button(msg,x,y,w,h,ic,ac,action=None):
     screen.blit(textSurf, textRect)
 
 
+
 def lvlinit():
     f = open("%s\\levels\\1.txt" % DIR, 'r')
     level = []
@@ -89,6 +101,8 @@ def lvlinit():
     
 
 def main():
+    pygame.display.set_caption("Amazing Doctor Strange")
+    bg.fill(Color(BACKGROUND_COLOR))
     hero = Player(55,55) # создаем героя по (x,y) координатам
     left = right = False # по умолчанию - стоим
     up = False
@@ -123,6 +137,31 @@ def main():
         pygame.display.update()
     pygame.quit() 
 
+def game_intro():
+
+    intro = True
+
+    while intro:
+        for event in pygame.event.get():
+            #print(event)
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+                
+        screen.fill(white)
+        largeText = pygame.font.SysFont("comicsansms",60)
+        TextSurf, TextRect = text_objects("Amazing Doctor Strange", largeText)
+        TextRect.center = ((width/2),100)
+        screen.blit(TextSurf, TextRect)
+
+        button("Start game!",412,300,200,50,green,bright_green,main)
+        button("Records",412,400,200,50,green,bright_green,)
+        button("Quit",412,500,200,50,red,bright_red,quit)
+        
+
+        pygame.display.update()
+        clock.tick(15)
+
 if __name__ == '__main__':
-	main()
+	game_intro()
 
