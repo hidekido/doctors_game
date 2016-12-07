@@ -113,10 +113,10 @@ def main():
     timer = pygame.time.Clock()
     portalin = None
     mainLoop = True
+    click = [0]
     while mainLoop:
         timer.tick(60)
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
+        
         for e in pygame.event.get(): # Обрабатываем события
             if e.type == QUIT:
                 raise SystemExit
@@ -136,8 +136,12 @@ def main():
         if click[0] == 1:
             if portalin != None:
                 entities.remove(portalin)
+                platforms.remove(portalin)
             portalin = BlockTeleport(mouse[0],mouse[1])
+            platforms.append(portalin)
             entities.add(portalin)
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
 
         screen.blit(bg, (0,0))
         if portalin != None:
@@ -146,7 +150,7 @@ def main():
             screen.blit(e.image, camera.apply(e))
         hero.update(left,right,up,platforms)
         pygame.display.update()
-        pygame.quit() 
+    pygame.quit() 
 
 def records_menu():
     pygame.display.set_caption("Records menu")
@@ -186,12 +190,12 @@ def records_menu():
         TextSurf, TextRect = text_objects("5) piu", largeText)
         TextRect = (50,400)
         screen.blit(TextSurf, TextRect)
-        '''
+        
         doc_width = 406
         doc_height = 386
         menu_doc = pygame.image.load('%s/blocks/grades.png' % DIR)
         screen.blit(menu_doc,(512,200))
-        '''
+        
 
         button("Back to menu",378,600,250,50,green,bright_green,game_intro)
         pygame.display.update()
