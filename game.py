@@ -26,10 +26,10 @@ total_level_height = 1
 
 black = (0,0,0)
 white = (255,255,255)
-red = (200,0,0)
-green = (0,200,0)
-bright_red = (255,0,0)
-bright_green = (0,255,0)
+red = (255,56,85)
+green = (79,255,175)
+bright_red = (255,81,90)
+bright_green = (142,255,200)
 
 
 
@@ -70,7 +70,7 @@ def button(msg,x,y,w,h,ic,ac,action=None):
             action()         
     else:
         pygame.draw.rect(screen, ic,(x,y,w,h))
-    smallText = pygame.font.SysFont("comicsansms",20)
+    smallText = pygame.font.SysFont("comicsansms",30)
     textSurf, textRect = text_objects(msg, smallText)
     textRect.center = ( (x+(w/2)), (y+(h/2)) )
     screen.blit(textSurf, textRect)
@@ -146,15 +146,62 @@ def main():
             screen.blit(e.image, camera.apply(e))
         hero.update(left,right,up,platforms)
         pygame.display.update()
-    pygame.quit() 
+        pygame.quit() 
+
+def records_menu():
+    pygame.display.set_caption("Records menu")
+    rec = True
+    while rec:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        screen.fill(white)
+        largeText = pygame.font.SysFont("comicsansms",60)
+        TextSurf, TextRect = text_objects("Records", largeText)
+        TextRect.center = ((width/2),100)
+        screen.blit(TextSurf, TextRect)
+
+        largeText = pygame.font.SysFont("comicsansms",40)
+        TextSurf, TextRect = text_objects("1) piu piu piu piu piu", largeText)
+        TextRect = (50,200)
+        screen.blit(TextSurf, TextRect)
+
+        largeText = pygame.font.SysFont("comicsansms",40)
+        TextSurf, TextRect = text_objects("2) piu piu piu piu", largeText)
+        TextRect = (50,250)
+        screen.blit(TextSurf, TextRect)
+
+        largeText = pygame.font.SysFont("comicsansms",40)
+        TextSurf, TextRect = text_objects("3) piu piu piu", largeText)
+        TextRect= (50,300)
+        screen.blit(TextSurf, TextRect)
+
+        largeText = pygame.font.SysFont("comicsansms",40)
+        TextSurf, TextRect = text_objects("4) piu piu", largeText)
+        TextRect= (50,350)
+        screen.blit(TextSurf, TextRect)
+
+        largeText = pygame.font.SysFont("comicsansms",40)
+        TextSurf, TextRect = text_objects("5) piu", largeText)
+        TextRect = (50,400)
+        screen.blit(TextSurf, TextRect)
+        '''
+        doc_width = 406
+        doc_height = 386
+        menu_doc = pygame.image.load('%s/blocks/grades.png' % DIR)
+        screen.blit(menu_doc,(512,200))
+        '''
+
+        button("Back to menu",378,600,250,50,green,bright_green,game_intro)
+        pygame.display.update()
+        clock.tick(15)
 
 def game_intro():
-
     intro = True
 
     while intro:
         for event in pygame.event.get():
-            #print(event)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
@@ -165,9 +212,14 @@ def game_intro():
         TextRect.center = ((width/2),100)
         screen.blit(TextSurf, TextRect)
 
-        button("Start game!",412,300,200,50,green,bright_green,main)
-        button("Records",412,400,200,50,green,bright_green,)
-        button("Quit",412,500,200,50,red,bright_red,quit)
+        doc_width = 406
+        doc_height = 380
+        menu_doc = pygame.image.load('%s/blocks/menu2.png' % DIR)
+        screen.blit(menu_doc,(50,388))
+
+        button("Start game!",668,300,250,50,green,bright_green,main)
+        button("Records",668,400,250,50,green,bright_green,records_menu)
+        button("Quit",668,500,250,50,red,bright_red,quit)
         
 
         pygame.display.update()
