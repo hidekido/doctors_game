@@ -44,3 +44,9 @@ class BlockTeleport(sprite.Sprite):
 	def update(self):
 		self.image.fill(Color("#444444"))
 		self.boltAnim.blit(self.image, (0, 0))
+
+	def collide(self, platforms):
+		for p in platforms:
+			if sprite.collide_rect(self, p):
+				return True
+		return False

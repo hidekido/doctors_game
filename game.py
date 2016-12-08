@@ -127,6 +127,7 @@ def main():
     portalsLife = None
     timer.tick(10000)
     click = [0,0,0]
+    pygame.event.clear()
     while activegame:
         timer.tick(60)
         for e in pygame.event.get(): # Обрабатываем события
@@ -157,22 +158,29 @@ def main():
                 platforms.remove(portalout)
                 portalout = None
             portalin = BlockTeleport(mouse[0]-32,mouse[1]-48)
-            platforms.append(portalin)
-            entities.add(portalin)
-            portalFaze = 1
+            if portalin.collide(platforms) == False:
+                platforms.append(portalin)
+                entities.add(portalin)
+                portalFaze = 1
+            else:
+                portalFaze = 0
+                portalin = None
         
         if click[2] == 1:
             if portalFaze == 1:
                 portalout = BlockTeleport(mouse[0]-32,mouse[1]-48,portalin.truex,portalin.truey,1)
-                portalin.act = 1
-                portalin.goX = mouse[0]-32
-                portalin.goY = mouse[1]-48
-                portalin.alter = portalout
-                portalout.alter = portalin
-                platforms.append(portalout)
-                entities.add(portalout)
-                portalFaze = 2
-                portalsLife = 600
+                if portalout.collide(platforms) == False:
+                    portalin.act = 1
+                    portalin.goX = mouse[0]-32
+                    portalin.goY = mouse[1]-48
+                    portalin.alter = portalout
+                    portalout.alter = portalin
+                    platforms.append(portalout)
+                    entities.add(portalout)
+                    portalFaze = 2
+                    portalsLife = 600
+                else:
+                    portalout = None
 
         if portalsLife != None:
             portalsLife -= 1
@@ -189,7 +197,6 @@ def main():
         energyIm.fill(Color(energy_color))
         energy -= 0.01
         if energy <= 0:
-            global activegame
             activegame = False
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
@@ -202,7 +209,6 @@ def main():
         for e in entities:
             screen.blit(e.image, camera.apply(e))
         screen.blit(energyIm, (960,(20-energy)*32))
-        
         button("Back to menu",768,672,256,96,red,bright_red,closegame)
         pygame.display.update()
 
@@ -217,6 +223,7 @@ def main():
         button("Back to menu",512,394,256,96,red,bright_red,closegame)
         pygame.display.update()
     activegame = True
+    intro  = False
 
 
     
@@ -271,7 +278,8 @@ def records_menu():
         clock.tick(15)
 
 def game_intro():
-    intro = True
+    global intro
+    intro  = True
 
     while intro:
         for event in pygame.event.get():
@@ -293,11 +301,11 @@ def game_intro():
         button("Start game!",668,300,250,50,green,bright_green,main)
         button("Records",668,400,250,50,green,bright_green,records_menu)
         button("Quit",668,500,250,50,red,bright_red,quit)
-        
-
         pygame.display.update()
         clock.tick(15)
 
 if __name__ == '__main__':
-	game_intro()
+    while True:
+        game_intro()
+        intro  = True
 

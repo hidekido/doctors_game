@@ -113,7 +113,6 @@ class Player(sprite.Sprite):
     def collide(self, xvel, yvel, platforms):
         for p in platforms:
             if sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
-
                 if isinstance(p, block.BlockTeleport):
                     if p.act == 1:
                         p.alter.act = 0
@@ -136,7 +135,7 @@ class Player(sprite.Sprite):
                         self.yvel = 0                 # и энергия прыжка пропадает
             elif isinstance(p, block.BlockTeleport):
                 if p.act == 0 and p.alter != None:
-                    p.act =1
+                    p.act = 1
 
     def teleporting(self, goX, goY):
         self.rect.x = goX
