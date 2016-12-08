@@ -4,6 +4,7 @@ from block import *
 from player import *
 from pygame.locals import *
 import os
+import random
 
 WINHEIGHT = 768
 WINWIDTH = 1024
@@ -31,6 +32,8 @@ red = (255,56,85)
 green = (79,255,175)
 bright_red = (255,81,90)
 bright_green = (142,255,200)
+
+
 
 
 
@@ -123,6 +126,8 @@ def main():
     camera = Camera(camera_configure, total_level_width, total_level_height)
     portalin = None
     energy = 20
+    av_portals = 3
+    cr_time = 0
     portalout = None
     portalsLife = None
     timer.tick(10000)
@@ -146,7 +151,8 @@ def main():
             if e.type == KEYUP and e.key == K_LEFT:
                 left = False
 
-
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
         if click[0] == 1:
             if portalFaze == 1:
                 entities.remove(portalin)
@@ -158,7 +164,7 @@ def main():
                 platforms.remove(portalout)
                 portalout = None
             portalin = BlockTeleport(mouse[0]-32,mouse[1]-48)
-            if portalin.collide(platforms) == False:
+            if portalin.collide(platforms) == False and av_portals > 0:
                 platforms.append(portalin)
                 entities.add(portalin)
                 portalFaze = 1
@@ -169,7 +175,7 @@ def main():
         if click[2] == 1:
             if portalFaze == 1:
                 portalout = BlockTeleport(mouse[0]-32,mouse[1]-48,portalin.truex,portalin.truey,1)
-                if portalout.collide(platforms) == False:
+                if portalout.collide(platforms) == False and av_portals > 0 :
                     portalin.act = 1
                     portalin.goX = mouse[0]-32
                     portalin.goY = mouse[1]-48
@@ -179,6 +185,7 @@ def main():
                     entities.add(portalout)
                     portalFaze = 2
                     portalsLife = 600
+                    av_portals -= 1
                 else:
                     portalout = None
 
@@ -193,23 +200,46 @@ def main():
                 portalout = None
                 portalsLife = None
                 portalFaze = 0
+
+        if cr_time == 200:
+            crystal = Crystal(random.randrange(32, width-32),random.randrange(32, height-32))
+            while crystal.collide(platforms) != False:
+                crystal = Crystal(random.randrange(32, width-32),random.randrange(32, height-32))
+            cr_time = 0
+            entities.add(crystal)
+            platforms.append(crystal)
+
+        cr_time += 1
+
+        for p in platforms:
+            if isinstance(p, block.Crystal):
+                if p.collide_player(hero) == True:
+                    entities.remove(p)
+                    platforms.remove(p)
+                    energy += 5
+
         energyIm = Surface((32, energy*32))
         energyIm.fill(Color(energy_color))
         energy -= 0.01
         if energy <= 0:
             activegame = False
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
+        
         screen.blit(bg, (0,0))
         hero.update(left,right,up,platforms)
         if portalin != None:
             portalin.update()
         if portalout != None:
             portalout.update()
+        
         for e in entities:
             screen.blit(e.image, camera.apply(e))
         screen.blit(energyIm, (960,(20-energy)*32))
-        button("Back to menu",768,672,256,96,red,bright_red,closegame)
+        button("Back to menu",768,672,256,47,red,bright_red,closegame)
+
+        font = pygame.font.SysFont("comicsansms",15)
+        Text = font.render("Portals: "+str(av_portals), True, black)      
+        screen.blit(Text, (768,720))
+
         pygame.display.update()
 
     activegame = True
@@ -220,7 +250,7 @@ def main():
                 quit()
         timer.tick(60)
         screen.blit(bg, (0,0))
-        button("Back to menu",512,394,256,96,red,bright_red,closegame)
+        button("Back to menu",384,600,256,96,red,bright_red,closegame)
         pygame.display.update()
     activegame = True
     intro  = False
@@ -242,30 +272,25 @@ def records_menu():
         TextRect.center = ((width/2),100)
         screen.blit(TextSurf, TextRect)
 
-        largeText = pygame.font.SysFont("comicsansms",40)
-        TextSurf, TextRect = text_objects("1) piu piu piu piu piu", largeText)
-        TextRect = (50,200)
-        screen.blit(TextSurf, TextRect)
+        font = pygame.font.SysFont("comicsansms",40)
+        Text = font.render("1) piu piu piu piu piu", True, black)      
+        screen.blit(Text, (50,200))
 
-        largeText = pygame.font.SysFont("comicsansms",40)
-        TextSurf, TextRect = text_objects("2) piu piu piu piu", largeText)
-        TextRect = (50,250)
-        screen.blit(TextSurf, TextRect)
+        font = pygame.font.SysFont("comicsansms",40)
+        Text = font.render("2) piu piu piu piu", True, black)      
+        screen.blit(Text, (50,250))
 
-        largeText = pygame.font.SysFont("comicsansms",40)
-        TextSurf, TextRect = text_objects("3) piu piu piu", largeText)
-        TextRect= (50,300)
-        screen.blit(TextSurf, TextRect)
+        font = pygame.font.SysFont("comicsansms",40)
+        Text = font.render("3) piu piu piu", True, black)      
+        screen.blit(Text, (50,300))
 
-        largeText = pygame.font.SysFont("comicsansms",40)
-        TextSurf, TextRect = text_objects("4) piu piu", largeText)
-        TextRect= (50,350)
-        screen.blit(TextSurf, TextRect)
+        font = pygame.font.SysFont("comicsansms",40)
+        Text = font.render("1) piu piu", True, black)      
+        screen.blit(Text, (50,350))
 
-        largeText = pygame.font.SysFont("comicsansms",40)
-        TextSurf, TextRect = text_objects("5) piu", largeText)
-        TextRect = (50,400)
-        screen.blit(TextSurf, TextRect)
+        font = pygame.font.SysFont("comicsansms",40)
+        Text = font.render("1) piu", True, black)      
+        screen.blit(Text, (50,400))
         
         doc_width = 406
         doc_height = 386

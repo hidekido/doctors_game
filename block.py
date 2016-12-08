@@ -11,6 +11,11 @@ tp_color = "#444444"
 PLATFORM_COLOR = "#FF6262"
 DIR = os.path.dirname(__file__)
 
+CRYSTAL_WIDTH = 25
+CRYSTAL_HEIGHT = 25
+CRYSTAL_COLOR = "#FF6262"
+
+
 ANIMATION_BLOCKTELEPORT = [
             ('%s/blocks/portal2.png' % DIR),
             ('%s/blocks/portal1.png' % DIR)]
@@ -49,4 +54,21 @@ class BlockTeleport(sprite.Sprite):
 		for p in platforms:
 			if sprite.collide_rect(self, p):
 				return True
+		return False
+class Crystal(sprite.Sprite):
+	def __init__(self, x, y):
+		sprite.Sprite.__init__(self)
+		self.image = Surface((CRYSTAL_WIDTH, CRYSTAL_HEIGHT))
+		self.image.fill(Color(CRYSTAL_COLOR))
+		self.image = image.load("%s/blocks/crystal.png" % DIR)
+		self.rect = Rect(x, y, CRYSTAL_WIDTH, CRYSTAL_HEIGHT)
+	def collide(self, platforms):
+		for p in platforms:
+			if sprite.collide_rect(self, p):
+				return True
+		return False
+
+	def collide_player(self, player):
+		if sprite.collide_rect(self, player):
+			return True
 		return False

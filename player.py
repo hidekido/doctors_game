@@ -117,6 +117,8 @@ class Player(sprite.Sprite):
                     if p.act == 1:
                         p.alter.act = 0
                         self.teleporting(p.goX, p.goY)
+                elif isinstance(p, block.Crystal):
+                    pass
 
                 else:
                     if xvel > 0:                      # если движется вправо
