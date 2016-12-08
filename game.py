@@ -2,6 +2,7 @@ import pygame
 from pygame import *
 from block import *
 from player import *
+from pygame.locals import *
 import os
 
 WINHEIGHT = 768
@@ -23,7 +24,7 @@ platforms = [] # то, во что мы будем врезаться или о�
 DIR = os.path.dirname(__file__)
 total_level_width = 1
 total_level_height = 1
-
+energy_color = "#1fd3dc"
 black = (0,0,0)
 white = (255,255,255)
 red = (255,56,85)
@@ -121,6 +122,7 @@ def main():
     lvlinit()
     camera = Camera(camera_configure, total_level_width, total_level_height)
     portalin = None
+    energy = 20
     portalout = None
     portalsLife = None
     timer.tick(10000)
@@ -183,7 +185,12 @@ def main():
                 portalout = None
                 portalsLife = None
                 portalFaze = 0
-
+        energyIm = Surface((32, energy*32))
+        energyIm.fill(Color(energy_color))
+        energy -= 0.01
+        if energy <= 0:
+            global activegame
+            activegame = False
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         screen.blit(bg, (0,0))
@@ -194,10 +201,23 @@ def main():
             portalout.update()
         for e in entities:
             screen.blit(e.image, camera.apply(e))
+        screen.blit(energyIm, (960,(20-energy)*32))
         
         button("Back to menu",768,672,256,96,red,bright_red,closegame)
         pygame.display.update()
+
     activegame = True
+    while  activegame:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        timer.tick(60)
+        screen.blit(bg, (0,0))
+        button("Back to menu",512,394,256,96,red,bright_red,closegame)
+        pygame.display.update()
+    activegame = True
+
 
     
 
