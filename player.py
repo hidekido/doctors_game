@@ -115,7 +115,10 @@ class Player(sprite.Sprite):
             if sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
 
                 if isinstance(p, block.BlockTeleport):
-                    self.teleporting(p.goX, p.goY)
+                    if p.act == 1:
+                        p.alter.act = 0
+                        self.teleporting(p.goX, p.goY)
+
                 else:
                     if xvel > 0:                      # если движется вправо
                         self.rect.right = p.rect.left # то не движется вправо
@@ -131,6 +134,9 @@ class Player(sprite.Sprite):
                     if yvel < 0:                      # если движется вверх
                         self.rect.top = p.rect.bottom # то не движется вверх
                         self.yvel = 0                 # и энергия прыжка пропадает
+            elif isinstance(p, block.BlockTeleport):
+                if p.act == 0 and p.alter != None:
+                    p.act =1
 
     def teleporting(self, goX, goY):
         self.rect.x = goX

@@ -115,13 +115,16 @@ def main():
     hero = Player(55,55) # создаем героя по (x,y) координатам
     left = right = False # по умолчанию - стоим
     up = False
+    portalFaze = 0
     global activegame
     entities.add(hero)
     lvlinit()
     camera = Camera(camera_configure, total_level_width, total_level_height)
     portalin = None
+    portalout = None
+    portalsLife = None
     timer.tick(10000)
-    click = [0]
+    click = [0,0,0]
     while activegame:
         timer.tick(60)
         for e in pygame.event.get(): # Обрабатываем события
@@ -140,23 +143,58 @@ def main():
             if e.type == KEYUP and e.key == K_LEFT:
                 left = False
 
+
         if click[0] == 1:
-            if portalin != None:
+            if portalFaze == 1:
                 entities.remove(portalin)
                 platforms.remove(portalin)
+            elif portalFaze ==2:
+                entities.remove(portalin)
+                platforms.remove(portalin)
+                entities.remove(portalout)
+                platforms.remove(portalout)
+                portalout = None
             portalin = BlockTeleport(mouse[0]-32,mouse[1]-48)
             platforms.append(portalin)
             entities.add(portalin)
+            portalFaze = 1
+        
+        if click[2] == 1:
+            if portalFaze == 1:
+                portalout = BlockTeleport(mouse[0]-32,mouse[1]-48,portalin.truex,portalin.truey,1)
+                portalin.act = 1
+                portalin.goX = mouse[0]-32
+                portalin.goY = mouse[1]-48
+                portalin.alter = portalout
+                portalout.alter = portalin
+                platforms.append(portalout)
+                entities.add(portalout)
+                portalFaze = 2
+                portalsLife = 600
+
+        if portalsLife != None:
+            portalsLife -= 1
+            if portalsLife<=0:
+                entities.remove(portalin)
+                platforms.remove(portalin)
+                entities.remove(portalout)
+                platforms.remove(portalout)
+                portalin = None
+                portalout = None
+                portalsLife = None
+                portalFaze = 0
 
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-
         screen.blit(bg, (0,0))
+        hero.update(left,right,up,platforms)
         if portalin != None:
             portalin.update()
+        if portalout != None:
+            portalout.update()
         for e in entities:
             screen.blit(e.image, camera.apply(e))
-        hero.update(left,right,up,platforms)
+        
         button("Back to menu",768,672,256,96,red,bright_red,closegame)
         pygame.display.update()
     activegame = True
