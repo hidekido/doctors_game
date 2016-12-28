@@ -21,11 +21,12 @@ ANIMATION_BLOCKTELEPORT = [
             ('%s/blocks/portal1.png' % DIR)]
 
 class Platform(sprite.Sprite):
-	def __init__(self, x, y):
+	def __init__(self, x, y, r):
 		sprite.Sprite.__init__(self)
 		self.image = Surface((PLATFORM_WIDTH, PLATFORM_HEIGHT))
 		self.image.fill(Color(PLATFORM_COLOR))
-		self.image = image.load("%s/blocks/platform.png" % DIR)
+		dirs = ["%s/blocks/platform1.png","%s/blocks/platform2.png","%s/blocks/platform3.png"]
+		self.image = image.load(dirs[r] % DIR)
 		self.rect = Rect(x, y, PLATFORM_WIDTH, PLATFORM_HEIGHT)
 
 class BlockTeleport(sprite.Sprite):
@@ -59,6 +60,7 @@ class Crystal(sprite.Sprite):
 	def __init__(self, x, y):
 		sprite.Sprite.__init__(self)
 		self.image = Surface((CRYSTAL_WIDTH, CRYSTAL_HEIGHT))
+		self.life = 150
 		self.image.fill(Color(CRYSTAL_COLOR))
 		self.image = image.load("%s/blocks/crystal.png" % DIR)
 		self.rect = Rect(x, y, CRYSTAL_WIDTH, CRYSTAL_HEIGHT)

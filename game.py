@@ -5,6 +5,8 @@ from player import *
 from pygame.locals import *
 import os
 import random
+import math
+
 
 WINHEIGHT = 768
 WINWIDTH = 1024
@@ -82,21 +84,24 @@ def button(msg,x,y,w,h,ic,ac,action=None):
 
 
 def lvlinit():
-    f = open("%s\\levels\\1.txt" % DIR, 'r')
+    l = random.randint(0,2)
+    levels = ["%s\\levels\\1.txt","%s\\levels\\2.txt","%s\\levels\\3.txt"]
+    f = open(levels[l] % DIR, 'r')
     level = []
     line = f.readline()
     while line != '':
-        if line[-2] == '\n':
+        if line[-1] == '\"':
             line = line[1:-1]
         else:
             line = line[1:-2]
         level += [line]
         line = f.readline()
     x = y = 0 # координаты
+    b = random.randint(0,2) #номер блока
     for row in level: # вся строка
         for col in row: # каждый символ
             if col == "-":
-                pf = Platform(x,y)
+                pf = Platform(x,y,b)
                 entities.add(pf)
                 platforms.append(pf)
             x += PLATFORM_WIDTH #блоки платформы ставятся на ширине блоков
@@ -132,6 +137,8 @@ def main():
     portalsLife = None
     timer.tick(10000)
     click = [0,0,0]
+    score = 0
+    lives = 3
     pygame.event.clear()
     while activegame:
         timer.tick(60)
@@ -201,13 +208,15 @@ def main():
                 portalsLife = None
                 portalFaze = 0
 
-        if cr_time == 200:
+        if cr_time == 120:
             crystal = Crystal(random.randrange(32, width-32),random.randrange(32, height-32))
             while crystal.collide(platforms) != False:
                 crystal = Crystal(random.randrange(32, width-32),random.randrange(32, height-32))
             cr_time = 0
             entities.add(crystal)
             platforms.append(crystal)
+
+
 
         cr_time += 1
 
@@ -216,11 +225,21 @@ def main():
                 if p.collide_player(hero) == True:
                     entities.remove(p)
                     platforms.remove(p)
-                    energy += 5
+                    energy += 2
+                elif p.life <= 0:
+                    entities.remove(p)
+                    platforms.remove(p)
+                else:
+                    p.life -= 1
 
+        energySur = Surface((32, 20*32))
+        energySur.fill(Color(BACKGROUND_COLOR))
         energyIm = Surface((32, energy*32))
         energyIm.fill(Color(energy_color))
-        energy -= 0.01
+        
+        if energy > 20:
+            energy = 20
+        energy -= 0.008
         if energy <= 0:
             activegame = False
         
@@ -233,15 +252,24 @@ def main():
         
         for e in entities:
             screen.blit(e.image, camera.apply(e))
+
+        screen.blit(energySur, (960,0))
         screen.blit(energyIm, (960,(20-energy)*32))
         button("Back to menu",768,672,256,47,red,bright_red,closegame)
 
-        font = pygame.font.SysFont("comicsansms",15)
-        Text = font.render("Portals: "+str(av_portals), True, black)      
+        pygame.draw.rect(screen, black, (768,715,256,53))
+
+        font = pygame.font.SysFont("comicsansms",20)
+        Text = font.render("Portals: "+str(av_portals), True, white)      
         screen.blit(Text, (768,720))
 
-        pygame.display.update()
+        font = pygame.font.SysFont("comicsansms",20)
+        Text = font.render("Lives: "+str(lives), True, white)      
+        screen.blit(Text, (768,740))
 
+        pygame.display.update()
+        score += 0.1
+        score = math.ceil(score)
     activegame = True
     while  activegame:
         for event in pygame.event.get():
@@ -250,7 +278,18 @@ def main():
                 quit()
         timer.tick(60)
         screen.blit(bg, (0,0))
-        button("Back to menu",384,600,256,96,red,bright_red,closegame)
+
+        font = pygame.font.SysFont("comicsansms",60)
+        Text = font.render("Score: "+str(score), True, white)      
+        screen.blit(Text, (380,300))
+
+        font = pygame.font.SysFont("comicsansms",40)
+        Text = font.render("Do you want to save the result?", True, white)      
+        screen.blit(Text, (225,400))
+
+        button("Yes",360,600,100,100,green,bright_green,)
+        button("No",560,600,100,100,red,bright_red,closegame)
+
         pygame.display.update()
     activegame = True
     intro  = False
@@ -285,11 +324,11 @@ def records_menu():
         screen.blit(Text, (50,300))
 
         font = pygame.font.SysFont("comicsansms",40)
-        Text = font.render("1) piu piu", True, black)      
+        Text = font.render("4) piu piu", True, black)      
         screen.blit(Text, (50,350))
 
         font = pygame.font.SysFont("comicsansms",40)
-        Text = font.render("1) piu", True, black)      
+        Text = font.render("5) piu", True, black)      
         screen.blit(Text, (50,400))
         
         doc_width = 406
