@@ -33,6 +33,7 @@ ANIMATION_STAY = [('%s/doc/0.png' % ICON_DIR, 0.1)]
 class Player(sprite.Sprite):
     def __init__(self, x, y):
         sprite.Sprite.__init__(self)
+        self.live = 3
         self.xvel = 0   #скорость перемещения. 0 - стоять на месте
         self.startX = x # Начальная позиция Х, пригодится когда будем переигрывать уровень
         self.startY = y
@@ -117,9 +118,13 @@ class Player(sprite.Sprite):
                     if p.act == 1:
                         p.alter.act = 0
                         self.teleporting(p.goX, p.goY)
+
                 elif isinstance(p, block.Crystal):
                     pass
 
+                elif  isinstance(p, block.BlockDie):
+                    self.die()
+                
                 else:
                     if xvel > 0:                      # если движется вправо
                         self.rect.right = p.rect.left # то не движется вправо
@@ -143,4 +148,8 @@ class Player(sprite.Sprite):
         self.rect.x = goX
         self.rect.y = goY
 
+    def die(self):
+        self.live -= 1
+        if self.live > 0:
+            self.teleporting(self.startX, self.startY)
        

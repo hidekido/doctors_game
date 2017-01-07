@@ -86,7 +86,7 @@ def button(msg,x,y,w,h,ic,ac,action=None):
 def lvlinit():
     l = random.randint(0,2)
     levels = ["%s\\levels\\1.txt","%s\\levels\\2.txt","%s\\levels\\3.txt"]
-    f = open(levels[l] % DIR, 'r')
+    f = open(levels[0] % DIR, 'r')
     level = []
     line = f.readline()
     while line != '':
@@ -104,6 +104,11 @@ def lvlinit():
                 pf = Platform(x,y,b)
                 entities.add(pf)
                 platforms.append(pf)
+            if col == "x":
+                pf = BlockDie(x,y)
+                entities.add(pf)
+                platforms.append(pf)
+
             x += PLATFORM_WIDTH #блоки платформы ставятся на ширине блоков
         y += PLATFORM_HEIGHT    #то же самое и с высотой
         x = 0                   #на каждой новой строчке начинаем с нуля
@@ -138,7 +143,6 @@ def main():
     timer.tick(10000)
     click = [0,0,0]
     score = 0
-    lives = 3
     pygame.event.clear()
     while activegame:
         timer.tick(60)
@@ -264,7 +268,9 @@ def main():
         screen.blit(Text, (768,720))
 
         font = pygame.font.SysFont("comicsansms",20)
-        Text = font.render("Lives: "+str(lives), True, white)      
+        Text = font.render("Lives: "+str(hero.live), True, white)  
+        if hero.live <= 0:
+            activegame = False    
         screen.blit(Text, (768,740))
 
         pygame.display.update()
@@ -287,7 +293,7 @@ def main():
         Text = font.render("Do you want to save the result?", True, white)      
         screen.blit(Text, (225,400))
 
-        button("Yes",360,600,100,100,green,bright_green,)
+        button("Yes",360,600,100,100,green,bright_green,save_record(score))
         button("No",560,600,100,100,red,bright_red,closegame)
 
         pygame.display.update()
@@ -340,6 +346,7 @@ def records_menu():
         button("Back to menu",378,600,250,50,green,bright_green,game_intro)
         pygame.display.update()
         clock.tick(15)
+
 
 def game_intro():
     global intro
