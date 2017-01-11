@@ -86,7 +86,7 @@ def button(msg,x,y,w,h,ic,ac,action=None):
 def lvlinit():
     l = random.randint(0,2)
     levels = ["%s\\levels\\1.txt","%s\\levels\\2.txt","%s\\levels\\3.txt"]
-    f = open(levels[0] % DIR, 'r')
+    f = open(levels[l] % DIR, 'r')
     level = []
     line = f.readline()
     while line != '':
@@ -96,7 +96,7 @@ def lvlinit():
             line = line[1:-2]
         level += [line]
         line = f.readline()
-    x = y = 0 # координаты
+    x = y = 0  # координаты
     b = random.randint(0,2) #номер блока
     for row in level: # вся строка
         for col in row: # каждый символ
@@ -219,9 +219,7 @@ def main():
             cr_time = 0
             entities.add(crystal)
             platforms.append(crystal)
-
-
-
+            
         cr_time += 1
 
         for p in platforms:
@@ -243,7 +241,7 @@ def main():
         
         if energy > 20:
             energy = 20
-        energy -= 0.008
+        energy -= 0.01
         if energy <= 0:
             activegame = False
         
@@ -284,16 +282,15 @@ def main():
                 quit()
         timer.tick(60)
         screen.blit(bg, (0,0))
-
         font = pygame.font.SysFont("comicsansms",60)
-        Text = font.render("Score: "+str(score), True, white)      
+        Text = font.render("Score: "+str(score + hero.live * 500), True, white)      
         screen.blit(Text, (380,300))
 
         font = pygame.font.SysFont("comicsansms",40)
         Text = font.render("Do you want to save the result?", True, white)      
         screen.blit(Text, (225,400))
 
-        button("Yes",360,600,100,100,green,bright_green,save_record(score))
+        button("Yes",360,600,100,100,green,bright_green,)
         button("No",560,600,100,100,red,bright_red,closegame)
 
         pygame.display.update()
